@@ -1,0 +1,97 @@
+@startuml
+
+class Program {
+        - penDown : boolean
+        - variables : Map<String, Variable>
+        - declaredVariablesBeforeExec : Map<String, Variable>
+}
+
+class Character {
+        - degrees : integer
+
+    }
+class Coordinates {
+    - x: double
+    - y: double
+}
+
+abstract class Instruction {
+    - Name : string
+}
+
+
+abstract class Movement extends Instruction {
+     - direction : integer
+     }
+
+
+class Rotation extends Movement
+
+class Translation extends Movement {
+    - distance : integer
+    }
+
+class Line {
+}
+
+class Shape {
+
+}
+
+class PenAction extends Instruction {
+
+}
+
+enum InstructionType {
+    MOVE_FORWARD
+    MOVE_BACKWARD
+    TURN_LEFT
+    TURN_RIGHT
+    PEN_UP
+    PEN_DOWN
+    VAR_DECLARATION
+    VAR_ASSIGNMENT
+    INCREMENT_VARIABLE
+    REPEAT
+    END_REPEAT
+}
+
+class Variable extends Value {
+    - name : string
+}
+
+abstract class VarAction extends Instruction {
+
+}
+
+class VarDeclaration extends VarAction {
+    - newVarName : String
+}
+
+class VarAssignment extends VarAction {
+    - varName : String
+}
+
+
+class Repeat extends Instruction {
+    - loop : int
+}
+
+class Value {
+    - value : integer
+}
+
+' --- RELATIONS --- '
+
+InstructionType -- Instruction
+Character -->  Coordinates : has
+Program --> Character :  moves
+Program "1" --> "*" Instruction : executes
+Shape "1" --> "*" Line : contains
+Program  --> Shape : draws
+Line "1" --> "2" Coordinates : has
+Instruction --> Value : has
+VarAction --> Variable : describes
+VarAssignment "1" --> "2" Value : has
+
+@end

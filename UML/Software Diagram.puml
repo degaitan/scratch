@@ -1,0 +1,256 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+package scratch {
+    package scratch.model {
+        class Character {
+          - orientation : integer
+          + reset : void
+        }
+
+        class Coordinates {
+            - x : double
+            - y : double
+        }
+
+        abstract class Instruction {
+            - name : String
+            + execute(pen : Character) : void
+            + newInstruction() : Instruction
+            + duplicate() : Instruction
+            + changePenStatus(currentStatus : boolean) : boolean
+            + getNewVarName() : String
+            + setNewVarName(newVarName : String) : void
+            + increment(var : Variable, value : Value) : void
+            + getLoop() : integer
+            + assign(var : Variable, value : Value) : void
+            + getVarName() : String
+            + getDifference() : integer
+            + getAssignedValue() : Value
+            + setVarName (varName : String) : void
+            + setAssignedValue(assignedValue : Value) : void
+            + setDifference(difference : Value) : void
+        }
+
+        enum InstructionType {
+            - MOVE_FORWARD
+            - TURN_LEFT
+            - TURN_RIGHT
+            - PEN_UP
+            - PEN_DOWN
+            - VAR_DECLARATION
+            - VAR_ASSIGNMENT
+            - REPEAT
+            - END_REPEAT
+            - INCREMENT_VARIABLE
+        }
+
+        class Line {
+
+        }
+
+        abstract class Movement extends Instruction {
+            - direction : integer
+
+        }
+
+        class PenAction extends Instruction {
+            + changePenStatus(status : boolean) : boolean
+            + newInstruction() : Instruction
+            + duplicate() : Instruction
+        }
+
+        class Program {
+            - penDown : boolean
+            - catalogue : List<Instruction>
+            - instructions : List<Instruction>
+            - variables : Map<String, Variable>
+            - declaredVariablesBeforeExec : Map<String, Variable>
+            + addInstruction(idx : integer) : void
+            + up(idx : integer) : void
+            + down(idx : integer) : void
+            + empty() : void
+            + deleteInstruction(index : integer) : void
+            + duplicate(idx : integer) : void
+            + execute(instr : Instruction) : void
+            + saveToFile(file : File) : void
+            + loadFromFile(file : File) : void
+            + changeValue(instru : Instruction, param : String) : void
+            + getLoopStart(end : integer) : integer
+            + loopEnded(idx : integer) : boolean
+            + allLoopsClosed() : boolean
+            + checkProgramValidity() : boolean
+            + reset() : void
+            + evaluate(param : String) : Value
+            + assignVariable(instru : Instruction, variable : String, valueText : String) : void
+            + incrementVariable(instru : Instruction, variable : String, stepStr: String) : void
+            + resetVariables() : void
+        }
+
+        class Rotation extends Movement {
+            + execute(pen : Character) : void
+            + newInstruction() : Instruction
+            + duplicate() : Instruction
+        }
+
+        class Shape {
+            - lines : Set<Line>
+            + addLine(line : Line) : void
+        }
+
+        class Translation extends Movement {
+            - distance : integer
+            + execute(pen : Character) : void
+            + newInstruction() : Instruction
+            + duplicate() : Instruction
+        }
+
+        class Variable extends Value {
+            - name : string
+        }
+
+        abstract class VarAction extends Instruction {
+
+        }
+
+        class VarDeclaration extends VarAction {
+            - newVarName : String
+        }
+
+        class VarAssignment extends VarAction {
+            - varName : String
+        }
+
+
+        class Repeat extends Instruction {
+            - loop : int
+        }
+
+        class Value {
+            - value : integer
+        }
+    }
+
+    package scratch.viewModel {
+        class ExecutionViewModel {
+            - isAutoMode : boolean
+            - speedDelay : double
+            - stopBtnDisabled : boolean
+            - timeline : Timeline
+            + playAuto() : void
+            + stopAuto() : void
+        }
+        class MainViewModel {
+            + saveProgram(file : File) : void
+            + loadProgram(file : File) : void
+        }
+
+        class ScratchViewModel {
+            - instructions : List<Instruction>
+            - index : integer
+            - catalogIndex : integer
+            - indexExec : integer
+            - coordX : double
+            - coordY : double
+            - amount : integer
+            - errorMessage : string
+            - isLoaded : boolean
+            - isRunning : boolean
+            - isError : boolean
+            - onStepExecuted : Runnable
+            - offset : double
+            - leftBtnText : string
+            - leftBtnDisabled : boolean
+            - rightBtnText : string
+            - rightBtnDisabled : boolean
+            - variables : List<Variable>
+            - turtleInfoText : string
+            + canUp() : boolean
+            + canDown() : boolean
+            + canEmpty() : boolean
+            + canDuplicate() : boolean
+            + canDelete() : boolean
+            + addInstruction() : void
+            + up() : void
+            + down() : void
+            + removeInstru() : void
+            + duplicate() : void
+            + empty() : void
+            + execute() : void
+            + isPenDown() : boolean
+            + resetExecution() : void
+            + getOrientation() : integer
+            + updateState() : void
+            + clickLeftButton() : void
+            + clickRightButton() : void
+            + notifyProgramChanged() : void
+            + getNameInstruParIndex() : string
+            + changeValue() : void
+            + getParameterInstru() : integer
+            + isPenAction() : boolean
+            - updateTurtleInfoText() : void
+            + executeStep() : boolean
+            + changeAssignment(input1 : String, input2 : String) : void
+            + changeIncrement(varName : String, stepStr : String) : void
+            + getIncrementVarName() : String
+            + getIncrementStep() : String
+            - syncVariables() : void
+            + getTabLevel(index : integer) : integer
+            + getAssignmentVar() : String
+            + getAssignmentValue() : String
+
+        }
+
+    }
+    package scratch.view {
+        class VariablesView {
+
+                }
+        class ExecutionView {
+
+        }
+        class MainView {
+
+        }
+
+        class ScratchView {
+            - headTurtle : Group
+            - canvas : Canvas
+            - paletteList : List<Instruction>
+            - programList : List<Instruction>
+            - updateCanvas() : void
+            - updateDetails() : void
+            - loadData() : void
+            + canShowPlusMinusButtonsIncrement(input : String) : void
+            + canShowPlusMinusButtonsAmount(input : String) : void
+            + canShowPlusMinusButtonsAssign(input : String) : void
+
+        }
+    }
+}
+
+' --- RELATIONS --- '
+Character  -->  Coordinates : has
+Instruction  --  InstructionType
+Line "1" --> "2" Coordinates : has
+Program -->  Character : has
+Program "1" --> "*" Instruction : executes
+Shape "1" --> "*" Line : contains
+Program --> Shape : draws
+Instruction --> Value : has
+VarAction --> Variable : describes
+VarAssignment "1" --> "2" Value : has
+MainViewModel --> Program : has
+MainViewModel --> ScratchViewModel : has
+ScratchViewModel --> Program : has
+ScratchViewModel --> Character : has
+ScratchViewModel "1" --> "*" Instruction : contains
+ScratchViewModel "1" --> "*" Variable : contains
+ScratchViewModel --> ExecutionViewModel : has
+MainView --> MainViewModel : has
+ScratchView --> ScratchViewModel : has
+ScratchView "1" --> "*" Instruction : contains
+ExecutionView --> ScratchViewModel : has
+VariablesView --> ScratchViewModel : has
+
+@enduml
